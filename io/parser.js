@@ -929,6 +929,9 @@ X.parser.reslice2 = function(_sliceOrigin, _sliceXYSpacing, _sliceNormal, _color
           pixelValue_a = 255;
         }
 
+        // Discard NaN pixels
+        if (isNaN(pixval)) { pixelValue_a = 0; }
+
         textureForCurrentSlice[textureStartIndex] = pixelValue_r;
         textureForCurrentSlice[++textureStartIndex] = pixelValue_g;
         textureForCurrentSlice[++textureStartIndex] = pixelValue_b;
