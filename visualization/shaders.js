@@ -207,8 +207,10 @@ X.shaders = function() {
   t2 += ' } else if (useTexture) {\n';
   t2 += '   vec4 texture1 = texture2D(textureSampler,fragmentTexturePos);\n';
   t2 += '   vec4 textureSum = texture1;\n';
+  t2 += '   bool volumeSingleChannel = false;\n';
+  t2 += '   if (texture1.r == texture1.g && texture1.r == texture1.b) { volumeSingleChannel = true; }\n';
   // perform window level
-  t2 += '   if (volumeTexture) {\n';
+  t2 += '   if (volumeTexture && volumeSingleChannel) {\n';
   t2 += '     float _windowLow = ((volumeWindowLow - volumeScalarMin)/ (volumeScalarMax - volumeScalarMin));\n';
   t2 += '     float _windowHigh = ((volumeWindowHigh - volumeScalarMin)/ (volumeScalarMax - volumeScalarMin));\n';
   t2 += '     vec3 _minrange = vec3(_windowLow,_windowLow,_windowLow);\n';
@@ -241,7 +243,7 @@ X.shaders = function() {
   t2 += '     }\n';
   t2 += '   }\n';
   // threshold functionality for 1-channel volumes
-  t2 += '   if (volumeTexture) {\n';
+  t2 += '   if (volumeTexture && volumeSingleChannel) {\n';
   t2 += '     float _volumeLowerThreshold = (volumeLowerThreshold - volumeScalarMin)/ (volumeScalarMax - volumeScalarMin);\n';
   t2 += '     float _volumeUpperThreshold = (volumeUpperThreshold - volumeScalarMin)/ (volumeScalarMax - volumeScalarMin);\n';
   t2 += '     if (texture1.r < _volumeLowerThreshold ||\n';

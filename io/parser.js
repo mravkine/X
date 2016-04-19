@@ -907,9 +907,11 @@ X.parser.reslice2 = function(_sliceOrigin, _sliceXYSpacing, _sliceNormal, _color
         var pixelValue_a = 0;
 
         if (colorTable) {
+          // normalize pixel
+          var pixval_n = Math.floor(((pixval - object._min )/ (object._max - object._min))*1023);
 
           // color table!
-          var lookupValue = colorTable.get(pixval);
+          var lookupValue = colorTable.get(pixval_n);
           // check for out of range and use the last label value in this case
           if (!lookupValue) {
 
