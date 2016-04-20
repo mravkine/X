@@ -110,8 +110,15 @@ X.parserNRRD.prototype.parse = function(container, object, data, flag) {
   var min = MRI.min = min_max[0];
   var max = MRI.max = min_max[1];
   // attach the scalar range to the volume
-  object._min = object._windowLow = min;
-  object._max = object._windowHigh = max;
+  object._min = min;
+  object._max = max;
+  // set windows if not already set
+  if (object._windowLow == Infinity) {
+    object._windowLow = min;
+  }
+  if (object._windowHigh == -Infinity) {
+    object._windowHigh = max;
+  }
   // get the image dimensions
   object._dimensions = [ this.sizes[0], this.sizes[1], this.sizes[2] ];
   // spacing

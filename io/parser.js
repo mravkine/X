@@ -872,6 +872,9 @@ X.parser.reslice2 = function(_sliceOrigin, _sliceXYSpacing, _sliceNormal, _color
   var j = _hmin;
   var i = _wmin;
 
+  var window_high = object._windowHigh;
+  var window_low = object._windowLow;
+
   for (j = _hmin; j <= _he; j+=_resY) {
 
     _iHeight++;
@@ -907,28 +910,33 @@ X.parser.reslice2 = function(_sliceOrigin, _sliceXYSpacing, _sliceNormal, _color
         var pixelValue_a = 0;
 
         // normalize pixel
-        var pixval_n = Math.floor(((pixval - object._min )/ (object._max - object._min))*1023);
+        var pixval_n = 1 + Math.floor(((pixval - object._min )/ (object._max - object._min))*254);
 
         if (colorTable) {
+
+          var pixval_w = pixval;
+          if (pixval_w < window_low)  { pixval_w = window_low; }
+          if (pixval_w > window_high) { pixval_w = window_high; }
+          var pixval_idx = Math.floor(((pixval_w - window_low)/ (window_high - window_low))*1023);
+
           // color table!
-          var lookupValue = colorTable.get(pixval_n);
+          var lookupValue = colorTable.get(pixval_idx);
+
           // check for out of range and use the last label value in this case
           if (!lookupValue) {
-
-          lookupValue = [ 0, .61, 0, 0, 1 ];
-
+            lookupValue = [ 0, .61, 0, 0, 1 ];
           }
 
           pixelValue_r = 255 * lookupValue[1];
           pixelValue_g = 255 * lookupValue[2];
           pixelValue_b = 255 * lookupValue[3];
-          pixelValue_a = 1+pixval_n/4;
+          pixelValue_a = pixval_n;
 
         }
         else {
           // normalization should not happen here, only in the shaders/canvas??
           pixelValue_r = pixelValue_g = pixelValue_b = 255 * ((pixval - object._min )/ (object._max - object._min));
-          pixelValue_a = 1+pixval_n/4;
+          pixelValue_a = pixval_n;
         }
 
         // Discard NaN pixels
