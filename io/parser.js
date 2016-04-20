@@ -906,10 +906,10 @@ X.parser.reslice2 = function(_sliceOrigin, _sliceXYSpacing, _sliceNormal, _color
         var pixelValue_b = 0;
         var pixelValue_a = 0;
 
-        if (colorTable) {
-          // normalize pixel
-          var pixval_n = Math.floor(((pixval - object._min )/ (object._max - object._min))*1023);
+        // normalize pixel
+        var pixval_n = Math.floor(((pixval - object._min )/ (object._max - object._min))*1023);
 
+        if (colorTable) {
           // color table!
           var lookupValue = colorTable.get(pixval_n);
           // check for out of range and use the last label value in this case
@@ -922,17 +922,19 @@ X.parser.reslice2 = function(_sliceOrigin, _sliceXYSpacing, _sliceNormal, _color
           pixelValue_r = 255 * lookupValue[1];
           pixelValue_g = 255 * lookupValue[2];
           pixelValue_b = 255 * lookupValue[3];
-          pixelValue_a = 255 * lookupValue[4];
+          pixelValue_a = 1+pixval_n/4;
 
         }
         else {
           // normalization should not happen here, only in the shaders/canvas??
           pixelValue_r = pixelValue_g = pixelValue_b = 255 * ((pixval - object._min )/ (object._max - object._min));
-          pixelValue_a = 255;
+          pixelValue_a = 1+pixval_n/4;
         }
 
         // Discard NaN pixels
-        if (isNaN(pixval)) { pixelValue_a = 0; }
+        if (isNaN(pixval)) { 
+          pixelValue_a = 0;
+        }
 
         textureForCurrentSlice[textureStartIndex] = pixelValue_r;
         textureForCurrentSlice[++textureStartIndex] = pixelValue_g;
